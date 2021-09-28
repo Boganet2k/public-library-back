@@ -1,6 +1,7 @@
 class BooksController < ApplicationController
   include Response
   before_action :authenticate_user!
+  before_action :checkForAdminPermission, only: [:create, :update, :destroy]
   before_action :set_book, only: [:show, :update, :destroy]
 
   def index
@@ -43,5 +44,24 @@ class BooksController < ApplicationController
 
   def set_book
     @book = Book.find(params[:id])
+  end
+
+  def checkForAdminPermission
+
+    @isAccessGranted = false
+
+    @ROLE_ADMIN = Role.getRole[:admin]
+
+    current_user.roles.each do |role|
+
+      if role.name.eql? @ROLE_ADMIN
+        @isAccessGranted = true
+        break
+      end
+    end
+
+    if !@isAccessGranted
+      json_response(nil, :unauthorized)
+    end
   end
 end
