@@ -5,8 +5,7 @@ class BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
 
   def index
-    p "index " + current_user.email
-    @books = Book.all
+    @books = Book.find_by_title(params[:title]).find_by_author(params[:author])
     json_response(@books)
   end
 
