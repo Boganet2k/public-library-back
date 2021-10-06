@@ -4,12 +4,14 @@ class CheckExpiredReservationWorker
   def perform(*args)
     p "CheckExpiredReservationWorker date: " + DateTime.now.strftime("%Y-%m-%d %H:%M:%S %z")
 
+    @expiredPerionMin = ENV['RESERVATION_EXPIRED_PERIOD_MIN'].to_i
+
     Reservation.all.each do |reservation|
 
-      @toPlus1Min = reservation.from + 1.minutes
-      p "CheckExpiredReservationWorker @toPlus1Min: " + @toPlus1Min.strftime("%Y-%m-%d %H:%M:%S %z")
+      @endPeriod = reservation.from + @expiredPerionMin.minutes
+      p "CheckExpiredReservationWorker reservation from: " + reservation.from.strftime("%Y-%m-%d %H:%M:%S %z") + " to: " + @endPeriod.strftime("%Y-%m-%d %H:%M:%S %z")
 
-      if DateTime.now > @toPlus1Min
+      if DateTime.now > @endPeriod
 
         p "CheckExpiredReservationWorker mark as expired id: " + reservation.id.to_s
 
