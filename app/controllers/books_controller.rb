@@ -5,8 +5,9 @@ class BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
 
   def index
-    @books = Book.find_by_title(params[:title]).find_by_author(params[:author])
-    json_response(@books)
+    @books = Book.includes(:reservations).find_by_title(params[:title]).find_by_author(params[:author])
+    # json_response(@books)
+    render json: @books, include: 'reservations', status: status
   end
 
   def create

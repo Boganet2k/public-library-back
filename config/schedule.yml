@@ -1,0 +1,3 @@
+check_expired_reservation_job:
+  cron: "*/3 * * * *"
+  class: "CheckExpiredReservationWorker"
