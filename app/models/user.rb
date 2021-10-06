@@ -7,6 +7,7 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtDenylist
 
   has_and_belongs_to_many :roles
+  has_many :reservations
 
   before_save :fillDefaultRole
 
