@@ -26,6 +26,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'devise'
 gem 'devise-jwt'
+gem 'redis'
 gem 'sidekiq'
 gem 'sidekiq-cron'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
