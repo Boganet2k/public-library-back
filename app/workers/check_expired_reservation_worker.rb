@@ -17,6 +17,8 @@ class CheckExpiredReservationWorker
 
         reservation.to = DateTime.now
         reservation.save
+
+        UserMailer.with(reservation: reservation, reservation_expired_at: reservation.to.strftime("%Y-%m-%d %H:%M:%S %z")).reservation_expired.deliver_later
       end
     end
   end

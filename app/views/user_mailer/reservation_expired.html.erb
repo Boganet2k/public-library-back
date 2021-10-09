@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Hi, <%= @reservation.user.email %></h1>
+<p>
+  Your book reservation in a Public library:<br>
+  Author: <%= @reservation.book.author %>,<br>
+  Title: <%= @reservation.book.title %>,<br>
+  Description: <%= @reservation.book.description %>,<br><br>
+
+  was expired at: <%= @reservation_expired_at %>.
+  </p>
+<p>
+  To login to the site, just follow this link: <a href="<%= @url %>"><%= @url %></a>.
+</p>
+<p>Have a great day!</p>
+</body>
+</html>
