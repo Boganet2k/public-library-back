@@ -1,0 +1,13 @@
+Hi, <%= @reservation.user.email %>
+===============================================
+
+Your book reservation in a Public library:
+Author: <%= @reservation.book.author %>,
+Title: <%= @reservation.book.title %>,
+Description: <%= @reservation.book.description %>,
+
+was expired at: <%= @reservation_expired_at %>.
+
+To login to the site, just follow this link: <%= @url %>.
+
+Thanks for reservation and have a great day!
