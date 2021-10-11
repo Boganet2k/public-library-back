@@ -5,9 +5,15 @@ class BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
 
   def index
-    @books = Book.includes(:reservations).find_by_title(params[:title]).find_by_author(params[:author])
-    # json_response(@books)
-    render json: @books, include: 'reservations', status: status
+    if params[:code]
+      #Select only available books
+      # @books = Book.where.not('exists (?)', Reservation.unscope(where: :to).where('reservations.book_id = books.id and reservations.to is null').select(1))
+      @books = Book.joins(:reservations).reservations_with_code(params[:code]).with_status(params[:status]).find_by_title(params[:title]).find_by_author(params[:author])
+    else
+      @books = Book.includes(:reservations).with_status(params[:status]).find_by_title(params[:title]).find_by_author(params[:author])
+    end
+
+    render json: @books, include: 'reservations', status: :ok
   end
 
   def create

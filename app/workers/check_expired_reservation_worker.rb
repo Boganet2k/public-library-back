@@ -11,14 +11,21 @@ class CheckExpiredReservationWorker
       @endPeriod = reservation.from + @expiredPerionMin.minutes
       p "CheckExpiredReservationWorker reservation from: " + reservation.from.strftime("%Y-%m-%d %H:%M:%S %z") + " to: " + @endPeriod.strftime("%Y-%m-%d %H:%M:%S %z")
 
-      if DateTime.now > @endPeriod
+      if DateTime.now > @endPeriod  && reservation.reserved?
 
         p "CheckExpiredReservationWorker mark as expired id: " + reservation.id.to_s
 
-        reservation.to = DateTime.now
-        reservation.save
+        Reservation.transaction do
+          reservation = Reservation.lock.find(reservation.id)
+          reservation.to = DateTime.now
+          reservation.save!
 
-        UserMailer.with(reservation: reservation, reservation_expired_at: reservation.to.strftime("%Y-%m-%d %H:%M:%S %z")).reservation_expired.deliver_later
+          reservation.book.status = :available
+          reservation.book.save!
+
+          UserMailer.with(reservation: reservation, reservation_expired_at: reservation.to.strftime("%Y-%m-%d %H:%M:%S %z")).reservation_expired.deliver_later
+        end
+
       end
     end
   end
