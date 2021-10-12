@@ -5,15 +5,45 @@ class BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
 
   def index
+
+    @offset = (params[:current].to_i - 1) * params[:pageSize].to_i
+    @limit = params[:pageSize].to_i
+    @total = 0
+
     if params[:code]
       #Select only available books
       # @books = Book.where.not('exists (?)', Reservation.unscope(where: :to).where('reservations.book_id = books.id and reservations.to is null').select(1))
-      @books = Book.joins(:reservations).reservations_with_code(params[:code]).with_status(params[:status]).find_by_title(params[:title]).find_by_author(params[:author])
+
+      @total = Book.joins(:reservations)
+                   .reservations_with_code(params[:code])
+                   .with_status(params[:status])
+                   .find_by_title(params[:title])
+                   .find_by_author(params[:author])
+                   .count
+
+      @books = Book.joins(:reservations)
+                   .reservations_with_code(params[:code])
+                   .with_status(params[:status])
+                   .find_by_title(params[:title])
+                   .find_by_author(params[:author])
+                   .offset(@offset)
+                   .limit(@limit)
     else
-      @books = Book.includes(:reservations).with_status(params[:status]).find_by_title(params[:title]).find_by_author(params[:author])
+      @total = Book.includes(:reservations)
+                   .with_status(params[:status])
+                   .find_by_title(params[:title])
+                   .find_by_author(params[:author])
+                   .count
+
+      @books = Book.includes(:reservations)
+                   .with_status(params[:status])
+                   .find_by_title(params[:title])
+                   .find_by_author(params[:author])
+                   .offset(@offset)
+                   .limit(@limit)
     end
 
-    render json: @books, include: 'reservations', status: :ok
+    render json: {books: @books, total: @total}, include: 'reservations', status: :ok
   end
 
   def create
