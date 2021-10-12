@@ -3,6 +3,8 @@ class Book < ApplicationRecord
   #Book status was added to reduce complex reservations query
   enum status: [:available, :reserved, :lent]
 
+  default_scope { where(deleted_at: nil) }
+
   has_many :reservations
 
   scope :find_by_title, -> (title) { where("title ILIKE ?", "%#{title}%") if title.present? }

@@ -39,8 +39,14 @@ class BooksController < ApplicationController
 
   def destroy
     p "destroy " + current_user.email
-    @book.destroy
-    head :no_content
+    @book.deleted_at = DateTime.now
+
+    if @book.available? && @book.save
+      head :no_content
+    else
+      head :error
+    end
+
   end
 
   def book_params
